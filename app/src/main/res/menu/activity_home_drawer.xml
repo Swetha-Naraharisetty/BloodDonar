@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/profile"
+
+            android:title="@string/profile" />
+        <item android:id="@+id/donars"
+            android:title="@string/donar_details"
+            android:checked="true"
+             />
+
+        <item
+            android:id="@+id/beADonar"
+            android:title="@string/bedonar"
+            ></item>
+
+        <item
+            android:id="@+id/users"
+            android:title="@string/user"></item>
+
+        <item
+            android:id="@+id/about"
+            android:title="@string/about"></item>
+
+        <item
+            android:id="@+id/logout"
+            android:title="@string/logout"></item>
+    </group>
+
+</menu>
