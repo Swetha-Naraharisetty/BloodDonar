@@ -10,29 +10,30 @@
     tools:openDrawer="start">
 
     <include
-        layout="@layout/app_bar_home2"
+        layout="@layout/action_bar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content" />
+
+
     <FrameLayout
         android:id="@+id/donar_frame_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-    
-
-
-
-   <!-- <fragment
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        class="com.example.swetha_pt1880.blooddonar.fragment.DonarListFragment"
-        android:id="@+id/donarFragment"/>
+        android:layout_height="wrap_content">
 
-    <fragment
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/userFragment"
-        class="com.example.swetha_pt1880.blooddonar.fragment.UserListFragment"
-        ></fragment> -->
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            app:srcCompat="@android:drawable/ic_input_add" />
+    </FrameLayout>
+
+
+
+
+
+
 
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
@@ -42,5 +43,6 @@
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_home2"
         app:menu="@menu/activity_home_drawer" />
+
 
 </android.support.v4.widget.DrawerLayout>

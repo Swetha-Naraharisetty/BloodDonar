@@ -7,6 +7,8 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="windowNoTitle">true</item>
+        <!--<item name="android:actionOverflowButtonStyle">@style/Widget.ActionButton.Overflow</item>-->
+
     </style>
 
     <style name="MyTheme" parent="@android:style/Theme.Holo.Light">
@@ -18,10 +20,18 @@
     </style>
 
 
+
+    <style name="Widget.ActionButton.Overflow" parent="@android:style/Widget.Holo.ActionButton.Overflow">
+
+    </style>
+
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+    <style name="Theme.Sherlock.ForceOverflow" parent="Theme.Sherlock.ForceOverflow" />
+
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
@@ -46,7 +56,7 @@
     <!-- This configures the styles for the title within the Toolbar  -->
     <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textSize">21sp</item>
-        <item name="android:textStyle">italic</item>
+
     </style>
 
 </resources>

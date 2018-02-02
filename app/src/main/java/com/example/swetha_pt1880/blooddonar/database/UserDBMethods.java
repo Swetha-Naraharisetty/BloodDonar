@@ -6,11 +6,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.example.swetha_pt1880.blooddonar.database.Database;
-
 import java.sql.SQLException;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.ArrayList;
+
+import static com.example.swetha_pt1880.blooddonar.database.Database.donarTable;
 
 /**
  * Created by swetha-pt1880 on 12/1/18.
@@ -35,7 +34,7 @@ public class UserDBMethods  {
     }
 
     //inserting data into user table
-    public long addUser(String userId, String uName, String uDOB, String uGen, String uContact, String uPassword, String privs) throws SQLException {
+    public long addUser(String userId, String uName, String uDOB, String uGen, String uContact, String uPassword, String privs, int donar ) throws SQLException {
         open();
         ContentValues values = new ContentValues();
         values.put(Database.userId, userId);
@@ -45,6 +44,7 @@ public class UserDBMethods  {
         values.put(Database.uContact, uContact);
         values.put(Database.uPassword, uPassword);
         values.put(Database.uPriviledge, privs);
+        values.put(Database.uDonar, donar);
         long insertId = database.insert(Database.userTable, null,values);
         close();
         return insertId;
@@ -55,103 +55,86 @@ public class UserDBMethods  {
 
         Log.i(TAG + "credentials", id + pass);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Log.i("userId", id);
-        Cursor cursor = db.rawQuery("SELECT * from "+Database.userTable +" where "+Database.userId+" = ? ",new String[] {"" +id} );
-        Log.i(TAG + "count", cursor.getCount() + "");
-        if(cursor.moveToFirst() ){
-            //password = 6, priviledges = 7
+       // Cursor cursor = db.rawQuery("Select * from " + Database.userTable, null);
 
-            Log.i("pass", cursor.getString(6)  );
-            if(cursor.getString(5).equals(pass)){
-                db.close();
-                return cursor.getString(6);
-            }else
-                return "three";
+        Cursor cursor = db.rawQuery("Select * from "+Database.userTable , null);//+" where "+Database.userId+" = ?",new String[] {"" +id} );
+        Log.i(TAG + "count", cursor.getCount() + "" + id + pass);
+        if(cursor.moveToFirst()){
+            //password = 6, priviledges = 7
+           do {
+               Log.i("pass", cursor.getString(5) + cursor.getString(0));
+               if (cursor.getString(5).equals(pass) & cursor.getString(0).equals(id)) {
+                   db.close();
+                   return cursor.getString(6);
+               }
+           }while (cursor.moveToNext());
+           // }else
+               // return "three";
         }
         Log.i(TAG +"after cursor", "No data");
         db.close();
         return "zero";
     }
 
-    //updating the user credentials
-    public boolean updateUser(String phoneNo, String pass, String userId) throws SQLException {
-        ContentValues contentValues = new ContentValues();
-        //uName = 1, uDob = 2, gen = 3,  priv = 6
-        String uName, uDob,ugen, upriv;
-        Cursor  cursor = getProfile(userId);
-        uName = cursor.getString(1);
-        uDob = cursor.getString(2);
-        ugen = cursor.getString(3);
-        upriv = cursor.getString(6);
-
-        contentValues.put(Database.userId, userId);
-        contentValues.put(Database.uName,uName );
-        contentValues.put(Database.uDOB, uDob);
-        contentValues.put(Database.uGender, ugen);
-        contentValues.put(Database.uContact,phoneNo);
-        contentValues.put(Database.uPassword, pass);
-        contentValues.put(Database.uPriviledge, upriv);
-        open();
-        int result = database.update(Database.userTable,contentValues, Database.userId + "=?", new String[]{userId} );
-        Log.i("update result", String.valueOf(result));
-        close();
-        if(result > 0)
-            return true;
-        else
-            return false;
-    }
-
-
-
-    //get  single user details
-    public Cursor getUsers(){
+       public ArrayList<User> getUserList(){
         SQLiteDatabase db = dbHelper.getReadableDatabase();
+        ArrayList<User> users = new ArrayList<>();
         String id = "admin";
-        Cursor cursor = db.rawQuery("select * from " + Database.userTable + " where " + Database.userId + " != ? ",new String[] {"" + id} );
+        Cursor cursor = db.rawQuery("select * from " + Database.userTable , null );
         cursor.moveToNext();
-        return cursor;
-    }
+        if(cursor.getCount() > 0) {
+            Log.i(TAG + "count", String.valueOf(cursor.getCount()));
 
-    public Cursor getProfile(String userId){
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * from "+Database.userTable +" where "+Database.userId+" = ? ",new String[] {"" + userId} );
-        cursor.moveToNext();
-        return cursor;
-    }
+            if (cursor.moveToFirst()) {
 
-    public String getDOB(String did){
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select * from " + Database.userTable + " where "+ Database.userId+"= ?", new String[] {"" + did} );
-        cursor.moveToNext();
-        return cursor.getString(2);
-    }
+                do {
+                    Log.i(TAG + "id", cursor.getString(Database.uIdCN) + cursor.getInt(Database.uDonarCN));
+                    User newuser = new User();
+                    newuser.setUserId(cursor.getString(Database.uIdCN));
+                    newuser.setuName(cursor.getString(Database.uNameCN));
+                    newuser.setuGender(cursor.getString(Database.uGenCN));
+                    newuser.setuDOB(cursor.getString(Database.uDOBCN));
+                    newuser.setuContact(cursor.getString(Database.uContactCN));
+                    newuser.setuPassWord(cursor.getString(Database.uPassCN));
+                    newuser.setuPriviledge(cursor.getString(Database.uPrivCN));
+                    newuser.setDonar(cursor.getInt(Database.uDonarCN));
+                    users.add(newuser);
 
-    public boolean updatePreviledge(String uid, String operation) throws SQLException {
-
-        ContentValues contentValues = new ContentValues();
-        Cursor  cursor = getProfile(uid);
-        contentValues.put(Database.userId, uid);
-        contentValues.put(Database.uName,cursor.getString(1) );
-        contentValues.put(Database.uDOB, cursor.getString(2));
-        contentValues.put(Database.uGender, cursor.getString(3));
-        contentValues.put(Database.uContact,cursor.getString(4));
-        contentValues.put(Database.uPassword, cursor.getString(5));
-        if(operation.equals("Grant")){
-            contentValues.put(Database.uPriviledge,"one");
-        }else if(operation.equals("Revoke")){
-            contentValues.put(Database.uPriviledge,"zero");
+                } while (cursor.moveToNext());
+            }
         }
 
-        open();
-        int result = database.update(Database.userTable,contentValues, Database.userId + "=?", new String[]{uid} );
-        Log.i("update result", String.valueOf(result));
-        close();
-        if(result > 0)
-            return true;
-        else
-            return false;
+        return users;
     }
 
+
+    public  void populateUsers(ArrayList<User> users) throws SQLException {
+        open();
+       // deleteUsers();
+        for (User user: users){
+                Log.i(TAG + "user donar ", user.getuName() + user.getDonar());
+
+                long res = addUser(user.getUserId(), user.getuName(), user.getuDOB(), user.getuGender(), user.getuContact(),
+                        user.getuPassWord(), user.getuPriviledge(), user.getDonar());
+
+        }
+        close();
+
+    }
+
+
+    public User getProfile(String userId){
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        User user = new User();
+        Log.i(TAG + "7th val", "trying to get" + "");
+        Cursor cursor = db.rawQuery("SELECT * from "+Database.userTable +" where "+Database.userId+" = ? ",new String[] {"" + userId} );
+        if(cursor.moveToFirst()) {
+            Log.i(TAG + "7th val", cursor.getString(0) + cursor.getString(1) + cursor.getString(2) + cursor.getString(3) + cursor.getString(4) + cursor.getString(5) + cursor.getString(6) + cursor.getInt(Database.uDonarCN));
+
+            user = new User(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6), cursor.getInt(7));
+        }
+        return user;
+    }
 
     public void delUser(String userId) throws SQLException {
         open();
@@ -159,47 +142,28 @@ public class UserDBMethods  {
         close();
     }
 
-
-
-    public int getAge(String did){
-        Log.i(TAG + "dob", getDOB(did));
-        Date date = new Date(getDOB(did));
-        Log.i(TAG + "dob date", String.valueOf(date));
-        Calendar today = Calendar.getInstance();
-        int curYear = today.get(Calendar.YEAR);
-        int dobYear = date.getYear() + 1899;
-        Log.i(TAG + "dyear,cyear", curYear + "  " +dobYear);
-        int age = curYear - dobYear;
-        Log.i(TAG + "year age", age + "");
-        int curMonth = today.get(Calendar.MONTH) + 1;
-
-        int dobMonth = date.getMonth() - 1;
-        Log.i(TAG + "dmonth,cmonth", curMonth + "  " +dobMonth);
-        if (dobMonth > curMonth) { // this year can't be counted!
-
-            age--;
-            Log.i(TAG + "month age", age + "");
-
-        } else if (dobMonth == curMonth) { // same month? check for day
-
-            int curDay = today.get(Calendar.DAY_OF_MONTH);
-
-            int dobDay = date.getDay();
-            Log.i(TAG + "ddate,cdate", curDay + "  " +dobDay);
-            if (dobDay > curDay) { // this year can't be counted!
-
-                age--;
-                Log.i(TAG + "day age", age + "");
-
-            }
-
-        }
-        Log.i(TAG + "final  age", age + "");
+    public void deleteUsers() throws SQLException {
+        open();
+        database.delete( Database.userTable, null, null);
         close();
-        return age;
-
-
     }
 
 
+    //update password
+    public void updateUser(User user) throws SQLException {
+        open();
+        Log.i("+++++++donar", user.getDonar() + "");
+        ContentValues cv = new ContentValues();
+        cv.put(Database.userId, user.getUserId());
+        cv.put(Database.uName, user.getuName());
+        cv.put(Database.uDOB, user.getuDOB());
+        cv.put(Database.uGender, user.getuGender());
+        cv.put(Database.uContact, user.getuContact());
+        cv.put(Database.uPassword, user.getuPassWord());
+        cv.put(Database.uPriviledge, user.getuPriviledge());
+        cv.put(Database.uDonar, user.getDonar());
+        Log.i(TAG + "   =======donor===== ", user.getDonar()+ "");
+        int result = database.update(Database.userTable,cv, Database.userId + "=?", new String[]{user.getUserId()} );
+        close();
+    }
 }

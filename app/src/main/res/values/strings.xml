@@ -35,10 +35,15 @@
     <string name="bedonar">Be A Donar</string>
 
 
-    <!-- Search Refine Options -->
+    <!-- Search  Donar Refine Options -->
     <string name="refine_age">Age</string>
     <string name="refine_bloodType">Blood Type</string>
     <string name="refine_name"> Name</string>
+    <string name="refine_city">City</string>
+
+    <!-- Search User Refine Options -->
+    <string name="refine_uname">User Name</string>
+    <string name="refine_uid">User Id</string>
 
 
     <!-- hints  -->

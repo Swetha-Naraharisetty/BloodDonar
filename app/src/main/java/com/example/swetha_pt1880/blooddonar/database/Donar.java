@@ -1,17 +1,32 @@
 package com.example.swetha_pt1880.blooddonar.database;
 
+import java.io.Serializable;
+
 /**
  * Created by swetha-pt1880 on 21/1/18.
  */
 
-public class Donar {
+public class Donar implements Serializable {
 
-    public  int dId;
+
     public  String dName;
     public  String dDOB;
     public  String dGender;
     public  String dContact;
     public  String dCurrentLoc;
+
+    public Donar( String dName, String dDOB, String dGender, String dContact, String dCurrentLoc, String dBloodType, String dLastDonated, String dWeight) {
+
+        this.dName = dName;
+        this.dDOB = dDOB;
+        this.dGender = dGender;
+        this.dContact = dContact;
+        this.dCurrentLoc = dCurrentLoc;
+        this.dBloodType = dBloodType;
+        this.dLastDonated = dLastDonated;
+        this.dWeight = dWeight;
+    }
+
     public  String dBloodType;
     public  String dLastDonated;
     public  String dWeight;
@@ -82,11 +97,5 @@ public class Donar {
         this.dWeight = dWeight;
     }
 
-    public int getdId() {
-        return dId;
-    }
 
-    public void setdId(int dId) {
-        this.dId = dId;
-    }
 }

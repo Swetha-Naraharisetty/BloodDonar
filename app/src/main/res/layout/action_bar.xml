@@ -4,45 +4,37 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/dp_sixty"
-    android:fitsSystemWindows="true">
-
-
-
-   <android.support.design.widget.AppBarLayout
-    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:theme="@style/AppTheme.AppBarOverlay">
+    android:id="@+id/coordinator"
+    tools:context="com.example.swetha_pt1880.blooddonar.activity.HomeActivity">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/Atoolbar"
-        android:minHeight="?attr/actionBarSize"
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:titleTextColor="@android:color/white"
-        android:background="?attr/colorPrimary"
-        app:titleTextAppearance="@style/Toolbar.TitleText"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:contentInsetLeft="0dp"
+            app:contentInsetStart="0dp"
+            android:theme="@style/Theme.Sherlock.ForceOverflow"
+            app:titleTextAppearance="@style/Toolbar.TitleText"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
 
-            <android.support.v7.widget.AppCompatImageView
-                android:id="@+id/app_icon"
+            <TextView
+                android:id="@+id/app_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/ic_launcher"
-                />
-        <TextView
-            android:id="@+id/app_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name"
-           android:textAppearance="@style/Toolbar.TitleText"
-            android:gravity="center"/>
-    </android.support.v7.widget.Toolbar>
+                android:visibility="invisible"
+                android:textAlignment="viewStart"
+                android:textAppearance="@style/Toolbar.TitleText"
+                android:gravity="start"/>
 
-   </android.support.design.widget.AppBarLayout>
+        </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
 
-
-
-
-</android.support.design.widget.CoordinatorLayout >
+</android.support.design.widget.CoordinatorLayout>

@@ -4,10 +4,7 @@
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/profile"
 
-            android:title="@string/profile" />
         <item android:id="@+id/donars"
             android:title="@string/donar_details"
             android:checked="true"
@@ -21,6 +18,10 @@
         <item
             android:id="@+id/users"
             android:title="@string/user"></item>
+        <item
+            android:id="@+id/profile"
+
+            android:title="@string/profile" />
 
         <item
             android:id="@+id/about"

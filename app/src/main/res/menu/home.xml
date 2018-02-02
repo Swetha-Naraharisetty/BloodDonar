@@ -10,6 +10,47 @@
 
         />
 
+    <group
+
+        android:checkableBehavior="single"
+        android:id="@+id/refine_blood_group"
+        android:visible="false"
+        >
+        <item
+            android:id="@+id/refine_name"
+            android:title="@string/refine_name"
+            android:checked="true"
+            />
+        <item android:id="@+id/refine_blood"
+            android:title="@string/refine_bloodType"
+            />
+
+        <item
+            android:id="@+id/refine_city"
+            android:title="@string/refine_city"
+            ></item>
+
+        <item
+            android:id="@+id/refine_age"
+            android:title="@string/refine_age"></item>
+
+    </group>
+
+    <group android:checkableBehavior="single"
+        android:id="@+id/refine_user_group"
+        android:visible="false">
+
+        <item
+            android:id="@+id/refine_uname"
+            android:title="@string/refine_uname"
+            android:checked="true"></item>
+        <item
+            android:title="@string/refine_uid"
+            android:id="@+id/refine_uid"></item>
+    </group>
+
+
+
 
 
 </menu>
