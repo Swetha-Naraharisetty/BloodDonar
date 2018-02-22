@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_weight="2"
+    android:orientation="vertical"
+    tools:context="com.example.swetha_pt1880.blooddonar.activity.TextViewExpand">
+
+    <EditText
+        android:id="@+id/my_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:textSize="@dimen/sp_twenty"
+        />
+
+    <TextView
+        android:layout_below="@+id/my_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/sp_twenty"
+        android:id="@+id/my_text_view"
+        android:maxLines="4"
+        android:text="I tend to shy away from restaurant chains, but wherever I go, PF Chang&apos;s has solidly good food and, like Starbucks, they&apos;re reliable. We were staying in Boston for a week and after a long day and blah blah blah blah... "
+        android:textColor="@color/black"
+        android:requiresFadingEdge="vertical"
+        android:fadingEdgeLength="@dimen/dp_twenty"
+        android:maxLength="280"
+        android:ellipsize="marquee"/>
+    <TextView
+        android:background="@null"
+        android:id="@+id/more_less"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/my_text_view"
+        android:layout_alignParentRight="true"
+        android:text="more"
+        android:visibility="gone"
+        android:textSize="@dimen/sp_twenty"
+        android:textColor="@color/colorAccent" />
+
+
+</RelativeLayout>

@@ -9,8 +9,6 @@ import android.util.Log;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import static com.example.swetha_pt1880.blooddonar.database.Database.donarTable;
-
 /**
  * Created by swetha-pt1880 on 12/1/18.
  */
@@ -52,7 +50,8 @@ public class UserDBMethods  {
 
     //validating the user credentials
     public String checkUser(String id, String pass) throws SQLException {
-
+        String result = "three";
+        int count = 0;
         Log.i(TAG + "credentials", id + pass);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
        // Cursor cursor = db.rawQuery("Select * from " + Database.userTable, null);
@@ -63,9 +62,16 @@ public class UserDBMethods  {
             //password = 6, priviledges = 7
            do {
                Log.i("pass", cursor.getString(5) + cursor.getString(0));
-               if (cursor.getString(5).equals(pass) & cursor.getString(0).equals(id)) {
-                   db.close();
-                   return cursor.getString(6);
+               if (cursor.getString(0).equals(id)) {
+                   if(cursor.getString(5).equals(pass) ) {
+                       db.close();
+                       result = cursor.getString(6);
+                       return result;
+                   }else{
+                       result = "pass";
+                       return result;
+                   }
+
                }
            }while (cursor.moveToNext());
            // }else
@@ -73,7 +79,7 @@ public class UserDBMethods  {
         }
         Log.i(TAG +"after cursor", "No data");
         db.close();
-        return "zero";
+        return result;
     }
 
        public ArrayList<User> getUserList(){
@@ -128,6 +134,19 @@ public class UserDBMethods  {
         User user = new User();
         Log.i(TAG + "7th val", "trying to get" + "");
         Cursor cursor = db.rawQuery("SELECT * from "+Database.userTable +" where "+Database.userId+" = ? ",new String[] {"" + userId} );
+        if(cursor.moveToFirst()) {
+            Log.i(TAG + "7th val", cursor.getString(0) + cursor.getString(1) + cursor.getString(2) + cursor.getString(3) + cursor.getString(4) + cursor.getString(5) + cursor.getString(6) + cursor.getInt(Database.uDonarCN));
+
+            user = new User(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6), cursor.getInt(7));
+        }
+        return user;
+    }
+
+    public User getUser(String phone){
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        User user = new User();
+        Log.i(TAG + "7th val", "trying to get" + "");
+        Cursor cursor = db.rawQuery("SELECT * from "+Database.userTable +" where "+Database.uContact+" = ? ",new String[] {"" + phone} );
         if(cursor.moveToFirst()) {
             Log.i(TAG + "7th val", cursor.getString(0) + cursor.getString(1) + cursor.getString(2) + cursor.getString(3) + cursor.getString(4) + cursor.getString(5) + cursor.getString(6) + cursor.getInt(Database.uDonarCN));
 

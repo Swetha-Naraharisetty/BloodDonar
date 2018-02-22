@@ -5,6 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -79,7 +81,7 @@ public class Database extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL("CREATE TABLE Users (userId TEXT PRIMARY KEY, uName TEXT NOT NULL, uDOB TEXT NOT NULL, uGender TEXT NOT NULL," +
-                                    " uContact TEXT NOT NULL, uPassWord TEXT NOT NULL, uPriviledge TEXT NOT NULL, donar INTEGER)");
+                                    " uContact TEXT NOT NULL UNIQUE, uPassWord TEXT NOT NULL, uPriviledge TEXT NOT NULL, donar INTEGER)");
        //sqLiteDatabase.execSQL("INSERT INTO Users VALUES('admin','SN','24/10/1996','Female','9491082374','admin','two')");
 
         sqLiteDatabase.execSQL("CREATE TABLE Donars (  dName  TEXT NOT NULL, dDOB TEXT NOT NULL," +
@@ -106,6 +108,50 @@ public class Database extends SQLiteOpenHelper {
 
     //DataBase Operations
 
+
+    public int getMonths(String dob){
+        Log.i(TAG , "dob " + dob);
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        Date date = null;
+        try {
+            date = formatter.parse(dob);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        Log.i(TAG + "dob date", String.valueOf(date));
+        Calendar today = Calendar.getInstance();
+        int curYear = today.get(Calendar.YEAR);
+        int dobYear = date.getYear() + 1900;
+        Log.i(TAG + "dyear,cyear", curYear + "  " +dobYear);
+        int age = (curYear - dobYear) * 12;
+        int curMonth = today.get(Calendar.MONTH) + 1;
+
+        int dobMonth = date.getMonth() + 1;
+        Log.i(TAG + "dmonth,cmonth", curMonth + "  " +dobMonth + " " );
+        if (dobMonth > curMonth) { // this year can't be counted!
+           age = age - (dobMonth - curMonth);
+
+            Log.i(TAG + "month age", age + "");
+
+        } else if (dobMonth == curMonth) { // same month? check for day
+
+            int curDay = today.get(Calendar.DAY_OF_MONTH);
+
+            int dobDay = date.getDay();
+            Log.i(TAG + "ddate,cdate", curDay + "  " +dobDay);
+            if (dobDay > curDay) { // this year can't be counted!
+
+                age--;
+                Log.i(TAG + "day age", age + "");
+
+            }
+
+        }
+        Log.i(TAG + "final  age", age + "");
+        return age;
+    }
+
     public int getAge(String dob){
         Log.i(TAG , "dob " + dob);
         Date date = new Date(dob);
@@ -118,7 +164,7 @@ public class Database extends SQLiteOpenHelper {
         Log.i(TAG + "year age", age + "");
         int curMonth = today.get(Calendar.MONTH) + 1;
 
-        int dobMonth = date.getMonth() - 1;
+        int dobMonth = date.getMonth() + 1;
         Log.i(TAG + "dmonth,cmonth", curMonth + "  " +dobMonth);
         if (dobMonth > curMonth) { // this year can't be counted!
 

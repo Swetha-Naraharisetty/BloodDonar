@@ -42,6 +42,26 @@ public class DonarDBMethods {
         dbHelper.close();
     }
 
+    //updating donar details
+    public void updateDonar(Donar donar) throws SQLException {
+        open();
+        Log.i(TAG + " updating donar ", donar.getdName() );
+        ContentValues cv = new ContentValues();
+        cv.put(Database.dName, donar.getdName());
+        cv.put(Database.dBloodType, donar.getdBloodType());
+        cv.put(Database.dContact, donar.getdContact());
+        cv.put(Database.dCurrentLoc, donar.getdCurrentLoc());
+        cv.put(Database.dDOB, donar.getdDOB());
+        cv.put(Database.dGender, donar.getdGender());
+        cv.put(Database.dWeight, donar.getdWeight());
+        cv.put(Database.lastDonated, donar.getdLastDonated());
+        Log.i(TAG + "   =======donor===== ", donar.getdName()+ "");
+        int result = database.update(Database.donarTable,cv, Database.dContact + "=?", new String[]{donar.getdContact()} );
+
+        close();
+
+    }
+
     //inserting data into Donar table
     public long addDonar( String dName, String dDOB, String dGen, String dContact, String dCurrentLoc, String blood, String lastDonated, String Weight) throws SQLException {
         open();
@@ -103,14 +123,42 @@ public class DonarDBMethods {
     public  void delDonar(String con) throws SQLException {
         open();
         database.execSQL("DELETE from  "+Database.donarTable+" where "+Database.dContact+" = ?", new String[]{"" + con});
+        Log.i(TAG + " donar ", "deleted");
         close();
+    }
+
+
+    public Donar getDonarProfile(String contact){
+        readOpen();
+
+        Donar donarinstance = new Donar();
+        Cursor cursor = db.rawQuery("select * from " + donarTable + " where " +Database.dContact + "=?", new String[]{contact} );
+        cursor.moveToNext();
+        if(cursor.moveToFirst()) {
+            Log.i( TAG + " get count", String.valueOf(cursor.getCount()));
+
+            Log.i(TAG + "get id", cursor.getString(Database.dContactCN));
+
+            //donarinstance.setdId(cursor.getInt(Database.dIdCN));
+            donarinstance.setdName(cursor.getString(Database.dNameCN));
+            donarinstance.setdDOB(cursor.getString(Database.dDOBCN));
+            donarinstance.setdBloodType(cursor.getString(Database.dBTCN));
+            donarinstance.setdContact(cursor.getString(Database.dContactCN));
+            donarinstance.setdCurrentLoc(cursor.getString(Database.dCLocCN));
+            donarinstance.setdGender(cursor.getString(Database.dGenderCN));
+            donarinstance.setdLastDonated(cursor.getString(Database.dlDonatedCN));
+            donarinstance.setdWeight(cursor.getString(Database.dWeightCN));
+        }
+        return donarinstance;
+
     }
 
 
     public  void populateDonar(ArrayList<Donar> donars) throws SQLException {
         open();
-        Log.i(TAG + " populating donar ", "yes");
+        Log.i(TAG + " populating donar ", donars.toString());
         for(Donar donar: donars){
+            Log.i(TAG + " populating donar ", donar.getdName() + "    ");
             addDonar(donar.getdName(), donar.getdDOB(), donar.getdGender(), donar.getdContact(),
                     donar.getdCurrentLoc(), donar.getdBloodType(), donar.getdLastDonated(),
                     donar.getdWeight());

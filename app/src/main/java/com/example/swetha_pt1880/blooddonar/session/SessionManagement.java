@@ -44,7 +44,8 @@ public class SessionManagement {
         editor = pref.edit();
     }
 
-    /**
+
+        /**
      * Create login session
      * */
     public void createLoginSession(String name, String id){

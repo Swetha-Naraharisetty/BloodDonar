@@ -22,14 +22,15 @@
             android:id="@+id/profile"
 
             android:title="@string/profile" />
-
-        <item
-            android:id="@+id/about"
-            android:title="@string/about"></item>
-
         <item
             android:id="@+id/logout"
             android:title="@string/logout"></item>
+        <item
+            android:id="@+id/share"
+            android:title="share"></item>
+        <item
+            android:id="@+id/tab_view"
+            android:title="Tab View"></item>
     </group>
 
 </menu>

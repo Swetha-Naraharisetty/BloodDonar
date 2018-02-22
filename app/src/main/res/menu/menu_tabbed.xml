@@ -1,0 +1,23 @@
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.swetha_pt1880.blooddonar.activity.TabbedActivity">
+    <group android:checkableBehavior="single">
+
+         <item
+            android:id="@+id/tab_beADonar"
+            android:title="@string/bedonar"
+            ></item>
+
+        <item
+            android:id="@+id/tab_profile"
+
+            android:title="@string/profile" />
+        <item
+            android:id="@+id/tab_logout"
+            android:title="@string/logout"></item>
+
+    </group>
+
+</menu>

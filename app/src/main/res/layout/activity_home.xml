@@ -17,6 +17,7 @@
 
     <FrameLayout
         android:id="@+id/donar_frame_layout"
+        android:layout_marginTop="?attr/actionBarSize"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -28,12 +29,6 @@
             android:layout_margin="@dimen/fab_margin"
             app:srcCompat="@android:drawable/ic_input_add" />
     </FrameLayout>
-
-
-
-
-
-
 
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"

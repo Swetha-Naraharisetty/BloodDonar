@@ -1,19 +1,20 @@
 package com.example.swetha_pt1880.blooddonar.fragment;
 
-import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,23 +22,24 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.example.swetha_pt1880.blooddonar.R;
-import com.example.swetha_pt1880.blooddonar.activity.LoginActivity;
-import com.example.swetha_pt1880.blooddonar.adapter.DonarListAdapter;
+import com.example.swetha_pt1880.blooddonar.adapter.RecyclerUserTouchHelper;
 import com.example.swetha_pt1880.blooddonar.adapter.UserListAdapter;
-
-import com.example.swetha_pt1880.blooddonar.database.Donar;
 import com.example.swetha_pt1880.blooddonar.database.User;
 import com.example.swetha_pt1880.blooddonar.database.UserDBMethods;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
+import java.util.Comparator;
 
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 
 
-public class UserListFragment extends Fragment {
+public class UserListFragment extends Fragment  implements  RecyclerUserTouchHelper.RecyclerItemTouchHelperListener {
+
     // TODO: Rename parameter arguments, choose names that match
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -52,12 +54,13 @@ public class UserListFragment extends Fragment {
     private MenuItem mSearchAction;
     private SearchView searchView;
     private android.app.ActionBar actionBar;
-    CoordinatorLayout coordinatorLayout;
+    FrameLayout frameLayout;
     private boolean isSearchOpened = false;
     String TAG = "UserListFragment";
     View view;
     Menu menu;
     SwipeRefreshLayout refreshLayout;
+    Handler handler = new Handler();
     //private OnFragmentInteractionListener mListener;
 
     public UserListFragment() {
@@ -78,6 +81,7 @@ public class UserListFragment extends Fragment {
        view = inflater.inflate(R.layout.fragment_user_list, container, false);
         uMethod = new UserDBMethods(getActivity());
         view.setVisibility(View.VISIBLE);
+        frameLayout = (FrameLayout) view.findViewById(R.id.user_frame_frag);
         recyclerView = (RecyclerView) view.findViewById(R.id.userList);
 
         recyclerView.setHasFixedSize(true);
@@ -87,7 +91,8 @@ public class UserListFragment extends Fragment {
         DividerItemDecoration decoration = new DividerItemDecoration(getActivity(), VERTICAL);
         recyclerView.addItemDecoration(decoration);
         recyclerView.setLayoutManager(layoutManager);
-        refreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swiperefresh);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        refreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.user_refresh);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -113,18 +118,50 @@ public class UserListFragment extends Fragment {
         }
         Log.i(TAG + " nothing ", newUser.getUserId() + "null");
         user.remove(newUser);
+        Collections.sort(user, new Comparator<User>() {
+            public int compare(User v1, User v2) {
+                //Log.i(TAG + "sort", v1.getUserId()+ v2.getUserId());
+                return v1.getuName().toLowerCase().compareTo(v2.getuName().toLowerCase());
+            }
+        });
         adapter = new UserListAdapter(getActivity(), user);
         mAdapter = new UserListAdapter(getActivity(),user);
-
-
-
-
         recyclerView.setAdapter(mAdapter);
+
+        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerUserTouchHelper(0, ItemTouchHelper.LEFT, this);
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
+
+
+
+
+        ItemTouchHelper.SimpleCallback itemTouchHelperCallback1 = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT | ItemTouchHelper.UP) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+
+                // Row is swiped from recycler view
+                // remove it from adapter
+            }
+
+            @Override
+            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            }
+        };
+
+        // attaching the touch helper to recycler view
+        new ItemTouchHelper(itemTouchHelperCallback1).attachToRecyclerView(recyclerView);
         return view;
     }
 
     public void onRefresh(ArrayList<User> filteredData) {
         Log.i(TAG + " onRefresh ", filteredData.toString());
+        if (filteredData.isEmpty())
+            Toast.makeText(getActivity(), "No Users Found", Toast.LENGTH_SHORT).show();
         mAdapter = new UserListAdapter(getActivity(),filteredData);
         recyclerView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
@@ -193,7 +230,7 @@ public class UserListFragment extends Fragment {
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                params.width=200;
+                params.width=100;
                 searchView.setLayoutParams(params);
                 menu.setGroupVisible(R.id.refine_user_group, false);
                 return false;
@@ -221,11 +258,16 @@ public class UserListFragment extends Fragment {
             }
 
             @Override
-            public boolean onQueryTextChange(String query) {
+            public boolean onQueryTextChange(final String query) {
                 // filter recycler view when text is changed
 
                 Log.i(TAG + " onChange ", query);
                  adapter.getFilter().filter(query);
+                handler.removeCallbacksAndMessages(null);
+
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
                 filteredUsers= ( adapter.getFilteredUsers());
                 Log.i(TAG + " filter  c ", filteredUsers.toString());
                 if(query.isEmpty())
@@ -233,7 +275,10 @@ public class UserListFragment extends Fragment {
                 onRefresh(filteredUsers);
 
                  adapter.notifyDataSetChanged();
-                return false;
+
+                    }
+                }, 100);
+                return true;
             }
         });
     }
@@ -268,4 +313,63 @@ public class UserListFragment extends Fragment {
         return selectedRefine;
     }
 
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        user = uMethod.getUserList();
+        //user = ((MyApplication) getActivity().getApplication()).getUsers();
+        for(User u : user){
+            if(u.getUserId().equals("admin")) {
+                newUser = u;
+                break;
+            }
+        }
+        Log.i(TAG + " nothing ", newUser.getUserId() + "null");
+        user.remove(newUser);
+        Collections.sort(user, new Comparator<User>() {
+            public int compare(User v1, User v2) {
+                //Log.i(TAG + "sort", v1.getUserId()+ v2.getUserId());
+                return v1.getuName().toLowerCase().compareTo(v2.getuName().toLowerCase());
+            }
+        });
+        adapter = new UserListAdapter(getActivity(), user);
+        mAdapter = new UserListAdapter(getActivity(),user);
+
+
+
+
+        recyclerView.setAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
+        if (viewHolder instanceof UserListAdapter.ViewHolder) {
+            // get the removed item name to display it in snack bar
+            String name = user.get(viewHolder.getAdapterPosition()).getuName();
+
+
+            // backup of removed item for undo purpose
+            final User deletedItem = user.get(viewHolder.getAdapterPosition());
+            final int deletedIndex = viewHolder.getAdapterPosition();
+
+            // remove the item from recycler view
+            //mAdapter.(viewHolder.getAdapterPosition());
+
+            // showing snack bar with Undo option
+            Snackbar snackbar = Snackbar
+                    .make(frameLayout, name + " removed from cart!", Snackbar.LENGTH_LONG);
+            snackbar.setAction("UNDO", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    // undo is selected, restore the deleted item
+                  //  mAdapter.restoreItem(deletedItem, deletedIndex);
+                }
+            });
+            snackbar.setActionTextColor(Color.YELLOW);
+            snackbar.show();
+        }
+    }
 }

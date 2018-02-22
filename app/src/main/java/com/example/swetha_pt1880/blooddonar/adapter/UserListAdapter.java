@@ -1,9 +1,7 @@
 package com.example.swetha_pt1880.blooddonar.adapter;
 
-import android.app.AlertDialog;
-import android.app.FragmentTransaction;
+import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
@@ -12,30 +10,24 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.swetha_pt1880.blooddonar.R;
-import com.example.swetha_pt1880.blooddonar.activity.HomeActivity;
-import com.example.swetha_pt1880.blooddonar.database.User;
+import com.example.swetha_pt1880.blooddonar.activity.ProfileActivity;
+import com.example.swetha_pt1880.blooddonar.activity.UserScreenSlideActivity;
 import com.example.swetha_pt1880.blooddonar.database.User;
 import com.example.swetha_pt1880.blooddonar.database.UserDBMethods;
+import com.example.swetha_pt1880.blooddonar.fragment.ProfileFragment;
 import com.example.swetha_pt1880.blooddonar.fragment.UserListFragment;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by swetha-pt1880 on 16/1/18.
@@ -53,13 +45,15 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
     String TAG = "UserListAdapter";
     DatabaseReference databaseReference;
     String refine;
+    Activity activity;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         public TextView uid;
         public TextView uname;
         public View layout;
-        public Button grant;
+        public ImageButton delete;
+        public RelativeLayout viewBackground, viewForeground;
 
 
         public ViewHolder(View v) {
@@ -67,7 +61,9 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
             layout = v;
             uid = (TextView) v.findViewById(R.id.luid);
             uname = (TextView) v.findViewById(R.id.luname);
-            grant = (Button)v.findViewById(R.id.lgrant);
+            viewBackground = v.findViewById(R.id.view_background);
+            viewForeground = v.findViewById(R.id.view_foreground);
+            //delete = (ImageButton)v.findViewById(R.id.delete_user);
         }
     }
 
@@ -82,9 +78,10 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public UserListAdapter(Context userDetails, ArrayList<User> users) {
+    public UserListAdapter(Activity userDetails, ArrayList<User> users) {
         context = userDetails;
         this.users = users;
+        this.activity = userDetails;
         this.filteredUsers = users;
         this.adapter = this;
         uMethod = new UserDBMethods(context);
@@ -107,127 +104,38 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
         // set the data
         Log.i(TAG + "user id",filteredUsers.get(position).getUserId() );
 
-        holder.uid.setText("Id : " +filteredUsers.get(position).getUserId());
-        holder.uname.setText("Name : "+filteredUsers.get(position).getuName());
-
-        if (users.get(position).getuPriviledge().equals("zero")) {
-            holder.grant.setText("Grant");
-            holder.grant.setTextColor(-16711936);
-        } else if (users.get(position).getuPriviledge().equals("one")) {
-            holder.grant.setText("Revoke");
-            holder.grant.setTextColor(-65536);
-
-        }
+        holder.uid.setText("User id : " +filteredUsers.get(position).getUserId());
+        holder.uname.setText(filteredUsers.get(position).getuName());
 
 
-        holder.grant.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setMessage("Are you sure to "+holder.grant.getText() +" " + filteredUsers.get(position).getuName() + " Priviledges  ?");
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-
-                        if (holder.grant.getText().equals("Grant")) {
-                            // grant the  priviledges
-                            filteredUsers.get(position).setuPriviledge("one");
-                            adapter.notifyDataSetChanged();
-                            Toast.makeText(context, "Granted", Toast.LENGTH_LONG).show();
-                        } else if (holder.grant.getText().equals("Revoke")) {
-                            //revoke the priviledges
-                            filteredUsers.get(position).setuPriviledge("zero");
-                            adapter.notifyDataSetChanged();
-                            Toast.makeText(context, "Revoked", Toast.LENGTH_LONG).show();
-                        }
-
-                    }
-                });
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog
-                        //no action
-                        Toast.makeText(context, "no action", Toast.LENGTH_LONG).show();
-                    }
-                });
-                // Create the AlertDialog object and return it
+//        holder.delete.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//
+//            }
+//        });
 
 
-
-                databaseReference.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Log.i(TAG + "on data changed", "firebase" + filteredUsers.get(position));
-                        databaseReference.child(filteredUsers.get(position).getUserId()).setValue(filteredUsers.get(position));
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.i(TAG + " failed", databaseError.getDetails());
-
-                    }
-                });
-
-                Intent in = new Intent(context, HomeActivity.class);
-                context.startActivity(in);
-                android.app.AlertDialog dialog = builder.create();
-                dialog.show();
-            }
-        });
-
-
-        //long press delete
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setMessage("Do you want to delete " + filteredUsers.get(position).getuName() + " ?");
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
 
-                        try {
-                            uMethod.delUser(filteredUsers.get(position).getUserId());
+                 Intent in = new Intent(context, UserScreenSlideActivity.class);
+                 in.putExtra("id", filteredUsers.get(position).getUserId());
+                 in.putExtra("position", position);
+                in.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                 context.startActivity(in);
+                activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 
-                            Query query = databaseReference.child(filteredUsers.get(position).getUserId());
-                            query.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
-                                        appleSnapshot.getRef().removeValue();
-                                    }
-
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-                                    Log.e(TAG, "onCancelled", databaseError.toException());
-                                }
-                            });
-
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                            Toast.makeText(context, "Couldn't delete !!", Toast.LENGTH_LONG).show();
-                        }
-                        filteredUsers.remove(position);
-                        adapter.notifyDataSetChanged();
-                        Toast.makeText(context, "Deleted", Toast.LENGTH_LONG).show();
-                        Intent in = new Intent(context, HomeActivity.class);
-                        context.startActivity(in);
-                    }
-                });
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog
-                        //no action
-                        Toast.makeText(context, "no action", Toast.LENGTH_LONG).show();
-                    }
-                });
-                // Create the AlertDialog object and return it
-                android.app.AlertDialog dialog = builder.create();
-                dialog.show();
-
+//
             }
         });
+
+
+
+
+
 
 
     }
@@ -236,6 +144,9 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
     public int getItemCount() {
         return users.size();
     }
+
+
+
 
 
 

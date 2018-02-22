@@ -1,13 +1,9 @@
 package com.example.swetha_pt1880.blooddonar.adapter;
 
-import android.app.AlertDialog;
-import android.content.ClipData;
+import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,24 +16,18 @@ import android.widget.Toast;
 
 import com.example.swetha_pt1880.blooddonar.R;
 import com.example.swetha_pt1880.blooddonar.activity.DonarProfile;
-import com.example.swetha_pt1880.blooddonar.activity.HomeActivity;
 import com.example.swetha_pt1880.blooddonar.database.Database;
 import com.example.swetha_pt1880.blooddonar.database.Donar;
 import com.example.swetha_pt1880.blooddonar.database.DonarDBMethods;
 import com.example.swetha_pt1880.blooddonar.fragment.DonarListFragment;
 import com.example.swetha_pt1880.blooddonar.session.SessionManagement;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Created by swetha-pt1880 on 16/1/18.
@@ -50,6 +40,7 @@ public class DonarListAdapter extends RecyclerView.Adapter<DonarListAdapter.View
     public View donarView;
     private Context context;
     DonarDBMethods dMethod ;
+    Activity activity;
     Database db;
     private DonarListAdapter adapter;
     private  DonarListFragment dFragment = new DonarListFragment();
@@ -58,6 +49,7 @@ public class DonarListAdapter extends RecyclerView.Adapter<DonarListAdapter.View
     static  int update = 0;
     String TAG = "DonarListAdapter";
     String userId;
+   public View layout;
 
     DatabaseReference databaseReference;
 
@@ -70,7 +62,7 @@ public class DonarListAdapter extends RecyclerView.Adapter<DonarListAdapter.View
         // each data item is just a string in this case
         public TextView donar_blood;
         public TextView donar_name;
-        public View layout;
+
         public TextView dage;
 
 
@@ -86,8 +78,16 @@ public class DonarListAdapter extends RecyclerView.Adapter<DonarListAdapter.View
 
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public DonarListAdapter(Context donarDetails, ArrayList<Donar> donarList) {
+    public DonarListAdapter(Activity donarDetails, ArrayList<Donar> donarList) {
         this.context = donarDetails;
+        this.activity = donarDetails;
+
+        Collections.sort(donarList, new Comparator<Donar>() {
+            public int compare(Donar v1, Donar v2) {
+                Log.i(TAG + "sort", v1.getdName()+ v2.getdName());
+                return v1.getdName().toLowerCase().compareTo(v2.getdName().toLowerCase());
+            }
+        });
         this.donars = donarList;
         filteredDonar = donarList;
         this.adapter = this;
@@ -133,76 +133,18 @@ public class DonarListAdapter extends RecyclerView.Adapter<DonarListAdapter.View
             public void onClick(View view) {
                 Donar donar = filteredDonar.get(position);
                 Intent in = new Intent(context, DonarProfile.class);
+                in.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 Log.i(TAG +"did, age ", " " + donar);
                 Bundle args = new Bundle();
                 args.putSerializable("chatobj",(Serializable)donar);
                 in.putExtra("DATA",args);
                 context.startActivity(in);
+               activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 
             }
         });
 
 
-        donarView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                HashMap<String, String> user = sessionManagement.getUserDetails();
-                if (user.get(SessionManagement.KEY_ID) != (null)) {
-
-                    HashMap<String, String> loginUser = sessionManagement.getUserDetails();
-                    userId = loginUser.get(SessionManagement.KEY_ID);
-
-                    if (userId.equals("admin")) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                        builder.setMessage("Do you want to delete " + donars.get(position).getdName() + " ?");
-                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-
-                                try {
-                                    dMethod.delDonar(donars.get(position).getdContact());
-                                    Query query = databaseReference.child(donars.get(position).getdContact() + "");
-                                    query.addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(DataSnapshot dataSnapshot) {
-                                            for (DataSnapshot appleSnapshot : dataSnapshot.getChildren()) {
-                                                appleSnapshot.getRef().removeValue();
-                                            }
-
-                                        }
-
-                                        @Override
-                                        public void onCancelled(DatabaseError databaseError) {
-                                            Log.e(TAG, "onCancelled", databaseError.toException());
-                                        }
-                                    });
-
-                                } catch (SQLException e) {
-                                    e.printStackTrace();
-                                    Toast.makeText(context, "Couldn't delete !!", Toast.LENGTH_LONG).show();
-                                }
-                                donars.remove(position);
-                                adapter.notifyDataSetChanged();
-                                Toast.makeText(context, "Deleted", Toast.LENGTH_LONG).show();
-                                Intent in = new Intent(context, HomeActivity.class);
-                                context.startActivity(in);
-                            }
-                        });
-                        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // User cancelled the dialog
-                                //no action
-                                Toast.makeText(context, "no action", Toast.LENGTH_LONG).show();
-                            }
-                        });
-                        // Create the AlertDialog object and return it
-                        android.app.AlertDialog dialog = builder.create();
-                        dialog.show();
-                    }
-                }
-                return true;
-
-            }
-        });
 
 
     }
@@ -232,6 +174,7 @@ public class DonarListAdapter extends RecyclerView.Adapter<DonarListAdapter.View
                         Log.i(TAG + " query " , charString + donars);
 
                         if (refine.equals("name")){
+                            Log.i(TAG + " values ", donar.getdName().toLowerCase() + charSequence);
                             if (donar.getdName().toLowerCase().contains(charString.toLowerCase())) {
                                 filtered.add(donar);
                                 Log.i(TAG + "query add" , donar.getdName());

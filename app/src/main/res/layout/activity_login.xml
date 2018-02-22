@@ -1,76 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <include
+        android:id="@+id/include4"
+        layout="@layout/action_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:context="com.example.swetha_pt1880.blooddonar.activity.LoginActivity"
-    >
+    android:layout_below="@+id/include4">
 
-    <include
-        layout="@layout/action_bar"
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:id="@+id/login_text"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="61dp"
-        android:layout_marginTop="167dp"
-        android:text="@string/uid" />
-
-    <TextView
-        android:id="@+id/pass_Text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/login_text"
-        android:layout_centerVertical="true"
-        android:text="@string/pwd" />
-
-    <EditText
-        android:id="@+id/loginId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/login_text"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="85dp"
-        android:hint="@string/user_hint" />
-
-    <EditText
-        android:id="@+id/password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/pass_Text"
-        android:layout_alignBottom="@+id/pass_Text"
-        android:layout_alignStart="@+id/loginId"
-        android:hint="@string/password_hint"
-        android:inputType="textPassword"
-        android:singleLine="true"
-        android:imeOptions="actionDone"
-        />
-
-    <TextView
-        android:id="@+id/warning"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="21dp"
-        android:text="Invalid User Credentials"
-        android:visibility="gone"/>
-
-    <Button
-        android:id="@+id/login"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/password"
-        android:layout_marginTop="82dp"
-        android:layout_toStartOf="@+id/password"
-        android:text="@string/login" />
+        android:fitsSystemWindows="true"
+        android:minHeight="@dimen/dp_417"
+        android:minWidth="@dimen/dp_417"
+        tools:context="com.example.swetha_pt1880.blooddonar.activity.LoginActivity"
+        tools:layout_editor_absoluteY="25dp">
 
 
+        <TextView
+            android:id="@+id/login_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="64dp"
+            android:layout_marginTop="136dp"
+            android:text="@string/uid"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/pass_Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/login_text"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="64dp"
+            android:layout_marginTop="56dp"
+            android:text="@string/pwd"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/login_text" />
+
+        <EditText
+            android:id="@+id/loginId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/login_text"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="16dp"
+            android:hint="@string/user_hint"
+            android:singleLine="true"
+            android:lines="1"
+            app:layout_constraintBottom_toBottomOf="@+id/login_text"
+            app:layout_constraintStart_toEndOf="@+id/guideline5" />
+
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:lines="1"
+            android:layout_alignBaseline="@+id/pass_Text"
+            android:layout_alignBottom="@+id/pass_Text"
+            android:layout_alignStart="@+id/loginId"
+            android:layout_marginStart="16dp"
+            android:hint="@string/password_hint"
+            android:imeOptions="actionDone"
+            android:inputType="textPassword"
+            android:singleLine="true"
+            app:layout_constraintBottom_toBottomOf="@+id/pass_Text"
+            app:layout_constraintStart_toEndOf="@+id/guideline5" />
+
+        <Button
+            android:id="@+id/login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/password"
+            android:layout_marginStart="60dp"
+            android:layout_marginTop="24dp"
+            android:layout_toEndOf="@+id/pass_Text"
+            android:gravity="center"
+            android:text="@string/login"
+            app:layout_constraintStart_toStartOf="@+id/pass_Text"
+            app:layout_constraintTop_toBottomOf="@+id/password" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="224dp" />
+
+        <TextSwitcher
+            android:layout_width="207dp"
+            android:layout_height="93dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>
 </RelativeLayout>
