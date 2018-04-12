@@ -25,6 +25,16 @@
             android:scrollbars="vertical" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
+    <TextView
+        android:id="@+id/no_results_found"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="225dp"
+        android:text="No results found !!"
+        android:gravity="center_horizontal"/>
 
 
 </FrameLayout>

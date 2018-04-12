@@ -3,12 +3,16 @@ package com.example.swetha_pt1880.blooddonar.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.transition.Explode;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
@@ -41,6 +45,7 @@ public class DonarListAdapter extends RecyclerView.Adapter<DonarListAdapter.View
     private Context context;
     DonarDBMethods dMethod ;
     Activity activity;
+    public TextView dname;
     Database db;
     private DonarListAdapter adapter;
     private  DonarListFragment dFragment = new DonarListFragment();
@@ -70,8 +75,11 @@ public class DonarListAdapter extends RecyclerView.Adapter<DonarListAdapter.View
             super(v);
             layout = v;
             donar_name = (TextView) v.findViewById(R.id.dlName);
+            dname = (TextView) v.findViewById(R.id.dlName);
             dage = (TextView) v.findViewById(R.id.dlAge);
             donar_blood= (TextView) v.findViewById(R.id.dlBlood);
+
+
         }
     }
 
@@ -79,8 +87,10 @@ public class DonarListAdapter extends RecyclerView.Adapter<DonarListAdapter.View
 
     // Provide a suitable constructor (depends on the kind of dataset)
     public DonarListAdapter(Activity donarDetails, ArrayList<Donar> donarList) {
-        this.context = donarDetails;
         this.activity = donarDetails;
+
+        this.context = donarDetails;
+
 
         Collections.sort(donarList, new Comparator<Donar>() {
             public int compare(Donar v1, Donar v2) {
@@ -100,6 +110,8 @@ public class DonarListAdapter extends RecyclerView.Adapter<DonarListAdapter.View
     }
     @Override
     public DonarListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+
 
         LayoutInflater inflater = LayoutInflater.from(
                 parent.getContext());
@@ -138,8 +150,11 @@ public class DonarListAdapter extends RecyclerView.Adapter<DonarListAdapter.View
                 Bundle args = new Bundle();
                 args.putSerializable("chatobj",(Serializable)donar);
                 in.putExtra("DATA",args);
-                context.startActivity(in);
-               activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                ActivityOptionsCompat options = ActivityOptionsCompat.
+                        makeSceneTransitionAnimation((Activity) context, holder.donar_name, "donar_name");
+
+                context.startActivity(in , options.toBundle());
+               //activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 
             }
         });

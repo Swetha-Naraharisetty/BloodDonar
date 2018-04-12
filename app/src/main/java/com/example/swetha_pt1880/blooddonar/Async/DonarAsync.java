@@ -82,6 +82,9 @@ public class DonarAsync extends AsyncTask {
                 } catch (SQLException e) {
                     Toast.makeText(mcontext, "couldnt push the data", Toast.LENGTH_SHORT).show();
                 }
+                finally {
+                    dbMethods.close();
+                }
 
             }
 
@@ -99,6 +102,7 @@ public class DonarAsync extends AsyncTask {
 
                 users.clear();
 
+
                 Log.i(TAG + "populate user", "populate");
                 for(DataSnapshot data : dataSnapshot.getChildren()){
                     User user = data.getValue(User.class);
@@ -107,10 +111,14 @@ public class DonarAsync extends AsyncTask {
 
                 }
                 try {
+                    uMethod.deleteUsers();
                     Log.i(TAG + "populate donar", "populate");
                     uMethod.populateUsers(users);
                 } catch (SQLException e) {
                     Toast.makeText(mcontext, "couldnt push the data", Toast.LENGTH_SHORT).show();
+                }
+                finally {
+                    uMethod.close();
                 }
                 //dataObjects.setUsers(users);
             }

@@ -202,6 +202,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
                 filteredUsers = (ArrayList<User>) filterResults.values;
+
                //Log.i(TAG + " filtered User", filteredUsers.toString());
                 adapter.notifyDataSetChanged();
 

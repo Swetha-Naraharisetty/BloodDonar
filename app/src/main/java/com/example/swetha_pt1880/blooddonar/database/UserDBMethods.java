@@ -86,7 +86,11 @@ public class UserDBMethods  {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         ArrayList<User> users = new ArrayList<>();
         String id = "admin";
-        Cursor cursor = db.rawQuery("select * from " + Database.userTable , null );
+           String[] projection = {Database.userId, Database.uName, Database.uDOB, Database.uGender, Database.uContact, Database.uPassword, Database.uPriviledge, Database.uDonar};
+           String[] selArgs = {"" +new String("admin")};
+         Cursor cursor = db.query(Database.userTable, projection, Database.userId + " != ? ",selArgs ,null, null, Database.uName);
+
+
         cursor.moveToNext();
         if(cursor.getCount() > 0) {
             Log.i(TAG + "count", String.valueOf(cursor.getCount()));
@@ -109,7 +113,7 @@ public class UserDBMethods  {
                 } while (cursor.moveToNext());
             }
         }
-
+        db.close();
         return users;
     }
 
@@ -139,6 +143,7 @@ public class UserDBMethods  {
 
             user = new User(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6), cursor.getInt(7));
         }
+        db.close();
         return user;
     }
 
@@ -152,6 +157,7 @@ public class UserDBMethods  {
 
             user = new User(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6), cursor.getInt(7));
         }
+        db.close();
         return user;
     }
 
@@ -184,5 +190,22 @@ public class UserDBMethods  {
         Log.i(TAG + "   =======donor===== ", user.getDonar()+ "");
         int result = database.update(Database.userTable,cv, Database.userId + "=?", new String[]{user.getUserId()} );
         close();
+    }
+
+
+
+    public Cursor getUserCursor(){
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        ArrayList<User> users = new ArrayList<>();
+        String id = "admin";
+        String query = ("select * from " + Database.userTable +" where "+Database.userId+" != ? ORDER BY " + Database.uName);
+        Cursor cursor = db.rawQuery(query,  new String[]{"" +id});
+        cursor.moveToNext();
+        return cursor;
+    }
+
+    public Cursor query(String[] columns, String selection, String selectionArgs[], String sortBy){
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        return db.query(Database.userTable, columns, selection, selectionArgs, null, null, sortBy);
     }
 }

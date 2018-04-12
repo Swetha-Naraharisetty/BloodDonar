@@ -15,6 +15,7 @@ public class Donar implements Serializable {
     public  String dContact;
     public  String dCurrentLoc;
 
+
     public Donar( String dName, String dDOB, String dGender, String dContact, String dCurrentLoc, String dBloodType, String dLastDonated, String dWeight) {
 
         this.dName = dName;

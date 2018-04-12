@@ -13,14 +13,14 @@
         android:icon="@drawable/ic_delete_white_24dp"
         app:showAsAction="ifRoom"
         android:title="delete"
-        android:visible="false"></item>
+        ></item>
 
     <item
         android:id="@+id/edit"
         android:icon="@drawable/donar_edit"
         app:showAsAction="ifRoom"
         android:title="edit"
-        android:visible="false">
+        >
 
     </item>
 

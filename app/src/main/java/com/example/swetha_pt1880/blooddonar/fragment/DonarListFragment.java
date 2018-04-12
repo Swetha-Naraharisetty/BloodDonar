@@ -1,7 +1,9 @@
 package com.example.swetha_pt1880.blooddonar.fragment;
 
 import android.app.Activity;
+import android.support.annotation.Nullable;
 import android.content.Context;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
@@ -40,7 +42,7 @@ import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
  * Created by swetha-pt1880 on 18/1/18.
  */
 
-public class DonarListFragment extends Fragment {
+public class DonarListFragment extends Fragment   {
 
 
     public ArrayList<Donar> donarDetails = new ArrayList<>();
@@ -71,6 +73,8 @@ public class DonarListFragment extends Fragment {
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+
         dMethod = new DonarDBMethods(getActivity());
         view = inflater.inflate(R.layout.donar_fragment, container, false);
         //view.setVisibility(View.VISIBLE);
@@ -91,6 +95,7 @@ public class DonarListFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         DividerItemDecoration decoration = new DividerItemDecoration(getActivity(), VERTICAL);
         recyclerView.addItemDecoration(decoration);
+        donarDetails.clear();
         donarDetails = dMethod.getDonarsList();
         params = new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.MATCH_PARENT);
 
@@ -167,6 +172,8 @@ public class DonarListFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
+
+        //setRetainInstance(true);
         return view;
 
     }
@@ -186,7 +193,13 @@ public class DonarListFragment extends Fragment {
         // Refresh Your Fragment
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
+
+
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -341,4 +354,9 @@ public class DonarListFragment extends Fragment {
     }
 
 
-    }
+
+//
+
+
+
+}

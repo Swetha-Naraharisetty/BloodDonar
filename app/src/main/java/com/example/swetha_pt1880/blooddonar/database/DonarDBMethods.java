@@ -111,6 +111,7 @@ public class DonarDBMethods {
 
             }
         }
+        close();
         return donarDetails;
     }
 
@@ -149,6 +150,7 @@ public class DonarDBMethods {
             donarinstance.setdLastDonated(cursor.getString(Database.dlDonatedCN));
             donarinstance.setdWeight(cursor.getString(Database.dWeightCN));
         }
+        close();
         return donarinstance;
 
     }
